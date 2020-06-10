@@ -19,18 +19,17 @@ func (az *Azure) Init(accountName, accountKey string) error {
 	return nil
 }
 
-func (az *Azure) AddData() error {
+func (az *Azure) AddData(pk string, rk string, data map[string]interface{}) error {
 	tableService := az.storage.GetTableService()
-	table := tableService.GetTableReference("posts2")
-
+	table := tableService.GetTableReference("posts")
 	tableBatch := table.NewBatch()
 
 	entity := storage.Entity{}
 	entity.Table = table
-	entity.PartitionKey = "5"
-	entity.RowKey = "0"
+	entity.PartitionKey = pk
+	entity.RowKey = rk
 	entity.TimeStamp = time.Now()
-	entity.Properties = map[string]interface{}{"fina": 17}
+	entity.Properties = data
 
 	tableBatch.InsertOrMergeEntity(&entity, false)
 

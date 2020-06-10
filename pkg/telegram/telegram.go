@@ -3,6 +3,8 @@ package telegram
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+	"tg-worthlisteningto/pkg/client"
+	"tg-worthlisteningto/pkg/helper"
 )
 
 func BotInit(token string) (tgbotapi.BotAPI, tgbotapi.UpdatesChannel, error) {
@@ -25,11 +27,14 @@ func BotInit(token string) (tgbotapi.BotAPI, tgbotapi.UpdatesChannel, error) {
 	return *bot, updates, nil
 }
 
-func Run(bot tgbotapi.BotAPI, updates tgbotapi.UpdatesChannel) error {
+func Run(updates tgbotapi.UpdatesChannel, cl client.Azure) error {
 	for update := range updates {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
-		bot.Send(msg)
+		pk, err := helper.GetGenre(update.ChannelPost.Text)
+		if err != nil {
+			return err
+		}
+		d := map[string]interface{}{"message": update.ChannelPost.Text}
+		cl.AddData(pk, "0", d)
 	}
 
 	return nil

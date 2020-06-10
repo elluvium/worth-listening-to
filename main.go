@@ -18,17 +18,12 @@ func main() {
 		log.Printf("[ERROR] %v", err)
 	}
 
-	err = cl.AddData()
+	_, updates, err := telegram.BotInit(tg)
 	if err != nil {
 		log.Printf("[ERROR] %v", err)
 	}
 
-	bot, updates, err := telegram.BotInit(tg)
-	if err != nil {
-		log.Printf("[ERROR] %v", err)
-	}
-
-	err = telegram.Run(bot, updates)
+	err = telegram.Run(updates, cl)
 	if err != nil {
 		log.Printf("[ERROR] %v", err)
 	}
